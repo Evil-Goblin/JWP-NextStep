@@ -1,4 +1,4 @@
-package org.example.handler;
+package org.example.handler.request;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +46,13 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream();
              OutputStream out = connection.getOutputStream()){
+            int available = in.available();
+            byte[] read = new byte[available];
+            in.read(read);
+//            log.info("read byte: \n{}", new String(read));
+//            log.info("==========================END=============================");
+            Request request = Request.requestParse(new String(read));
+            System.out.println("request = " + request);
 
             DataOutputStream dos = new DataOutputStream(out);
             byte[] body = "Hello World".getBytes();

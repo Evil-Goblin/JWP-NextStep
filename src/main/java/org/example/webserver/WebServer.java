@@ -1,6 +1,6 @@
 package org.example.webserver;
 
-import org.example.handler.RequestHandler;
+import org.example.handler.request.RequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
