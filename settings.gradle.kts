@@ -1,2 +1,2 @@
-rootProject.name = "StringCalc"
+rootProject.name = "JWP-NextStep"
 
