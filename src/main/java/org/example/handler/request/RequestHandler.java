@@ -1,12 +1,11 @@
 package org.example.handler.request;
 
+import org.example.handler.controller.IndexController;
+import org.example.handler.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class RequestHandler implements Runnable {
@@ -46,18 +45,20 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream();
              OutputStream out = connection.getOutputStream()){
-            int available = in.available();
-            byte[] read = new byte[available];
-            in.read(read);
-//            log.info("read byte: \n{}", new String(read));
-//            log.info("==========================END=============================");
-            Request request = Request.requestParse(new String(read));
+            Request request = Request.requestParse(in);
             System.out.println("request = " + request);
+            Response response = new Response();
+
+            if ("index.html".equals(request.getUrl())) {
+                IndexController.IndexPage(request, response);
+            }
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+
+
+//            byte[] body = "Hello World".getBytes();
+//            response200Header(dos, body.length);
+//            responseBody(dos, body);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
