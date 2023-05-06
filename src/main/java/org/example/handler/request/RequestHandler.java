@@ -1,12 +1,20 @@
 package org.example.handler.request;
 
-import org.example.handler.controller.IndexController;
 import org.example.handler.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
+
+import static org.example.handler.ContentType.TEXT_HTML_VALUE;
+import static org.example.handler.StatusCode.CODE_404;
+import static org.example.handler.StatusCode.CODE_500;
+import static org.example.webserver.WebServer.CONTROLLER_MAP;
 
 public class RequestHandler implements Runnable {
 
@@ -38,27 +46,56 @@ public class RequestHandler implements Runnable {
         }
     }
 
+    private void response404Error(Request request, Response response) {
+        response.setVersion(request.getVersion());
+        response.setStatusCode(CODE_404);
+        response.setContentType(TEXT_HTML_VALUE);
+    }
+
+    private void response500Error(Request request, Response response) {
+        response.setVersion(request.getVersion());
+        response.setStatusCode(CODE_500);
+        response.setContentType(TEXT_HTML_VALUE);
+    }
+
     @Override
     public void run() {
         log.info("New Client Connect! Connected Ip : {}, Port : {}",
                 connection.getInetAddress(), connection.getPort());
 
         try (InputStream in = connection.getInputStream();
-             OutputStream out = connection.getOutputStream()){
+             OutputStream out = connection.getOutputStream()) {
             Request request = Request.requestParse(in);
             System.out.println("request = " + request);
             Response response = new Response();
 
-            if ("index.html".equals(request.getUrl())) {
-                IndexController.IndexPage(request, response);
+//            Method controller = CONTROLLER_MAP.get(request.getUrl());
+//            if (null != controller) {
+//                try {
+//                    controller.invoke(request, response);
+//                } catch (IllegalAccessException | InvocationTargetException e) {
+//                    // 500 error
+//                    response500Error(request, response);
+//                }
+//            } else {
+//                // 404 error
+//                response404Error(request, response);
+//            }
+
+            // 위와 아래 어떤게 더 나은지 모르겠다...
+            try {
+                CONTROLLER_MAP.get(request.getUrl()).invoke(request, response);
+            } catch (NullPointerException e) {
+                // 404 error
+                response404Error(request, response);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                // 500 error
+                response500Error(request, response);
             }
 
             DataOutputStream dos = new DataOutputStream(out);
-
-
-//            byte[] body = "Hello World".getBytes();
-//            response200Header(dos, body.length);
-//            responseBody(dos, body);
+            response.write(dos);
+            dos.flush();
         } catch (IOException e) {
             log.error(e.getMessage());
         }

@@ -8,5 +8,9 @@ public class StatusCode {
     public static final String CODE_204 = "204 No Content";
     public static final String CODE_205 = "205 Reset Content";
     public static final String CODE_206 = "206 Partial Content";
+
+    public static final String CODE_404 = "404 Not Found";
+
+    public static final String CODE_500 = "500 Internal Server Error";
 }
 
