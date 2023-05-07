@@ -14,6 +14,8 @@ import java.net.Socket;
 import static org.example.handler.ContentType.TEXT_HTML_VALUE;
 import static org.example.handler.StatusCode.CODE_404;
 import static org.example.handler.StatusCode.CODE_500;
+import static org.example.handler.response.FixedResponse.response404Error;
+import static org.example.handler.response.FixedResponse.response500Error;
 import static org.example.webserver.WebServer.CONTROLLER_MAP;
 
 public class RequestHandler implements Runnable {
@@ -46,18 +48,6 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void response404Error(Request request, Response response) {
-        response.setVersion(request.getVersion());
-        response.setStatusCode(CODE_404);
-        response.setContentType(TEXT_HTML_VALUE);
-    }
-
-    private void response500Error(Request request, Response response) {
-        response.setVersion(request.getVersion());
-        response.setStatusCode(CODE_500);
-        response.setContentType(TEXT_HTML_VALUE);
-    }
-
     @Override
     public void run() {
         log.info("New Client Connect! Connected Ip : {}, Port : {}",
@@ -84,11 +74,11 @@ public class RequestHandler implements Runnable {
 
             // 위와 아래 어떤게 더 나은지 모르겠다...
             try {
-                CONTROLLER_MAP.get(request.getUrl()).invoke(request, response);
+                CONTROLLER_MAP.get(request.getUrl()).invoke(null, request, response);
             } catch (NullPointerException e) {
                 // 404 error
                 response404Error(request, response);
-            } catch (IllegalAccessException | InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
                 // 500 error
                 response500Error(request, response);
             }

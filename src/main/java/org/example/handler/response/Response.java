@@ -1,11 +1,13 @@
 package org.example.handler.response;
 
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 @Setter
+@ToString
 public class Response {
     String version;
     String statusCode;
