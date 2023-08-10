@@ -11,9 +11,6 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 
-import static org.example.handler.ContentType.TEXT_HTML_VALUE;
-import static org.example.handler.StatusCode.CODE_404;
-import static org.example.handler.StatusCode.CODE_500;
 import static org.example.handler.response.FixedResponse.response404Error;
 import static org.example.handler.response.FixedResponse.response500Error;
 import static org.example.webserver.WebServer.CONTROLLER_MAP;
@@ -21,6 +18,7 @@ import static org.example.webserver.WebServer.CONTROLLER_MAP;
 public class RequestHandler implements Runnable {
 
     public static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+    private static final ThreadLocal<RequestResolver> resolverThreadLocal = new ThreadLocal<>();
     private final Socket connection;
 
     public RequestHandler(Socket connection) {
@@ -53,9 +51,30 @@ public class RequestHandler implements Runnable {
         log.info("New Client Connect! Connected Ip : {}, Port : {}",
                 connection.getInetAddress(), connection.getPort());
 
+        RequestResolver requestResolver = resolverThreadLocal.get();
+        if (requestResolver == null) {
+            requestResolver = new RequestResolver();
+            resolverThreadLocal.set(requestResolver);
+        }
+
         try (InputStream in = connection.getInputStream();
              OutputStream out = connection.getOutputStream()) {
-            Request request = Request.requestParse(in);
+
+            requestResolver.parse(in);
+
+            Request request = new Request.RequestBuilder()
+                    .method(requestResolver.getMethod())
+                    .url(requestResolver.getUrl())
+                    .version(requestResolver.getVersion())
+                    .accept(requestResolver.getProperties(RequestProperties.ACCEPT))
+                    .contentType(requestResolver.getProperties(RequestProperties.CONTENT_TYPE))
+                    .host(requestResolver.getProperties(RequestProperties.HOST))
+                    .connection(requestResolver.getProperties(RequestProperties.CONNECTION))
+                    .userAgent(requestResolver.getProperties(RequestProperties.USER_AGENT))
+                    .acceptEncoding(requestResolver.getProperties(RequestProperties.ACCEPT_ENCODING))
+                    .body(requestResolver.getBody())
+                    .build();
+
             System.out.println("request = " + request);
             Response response = new Response();
 
@@ -87,7 +106,9 @@ public class RequestHandler implements Runnable {
             response.write(dos);
             dos.flush();
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error("[RequestHandler] Error:", e);
+        } finally {
+            requestResolver.clear();
         }
     }
 }
