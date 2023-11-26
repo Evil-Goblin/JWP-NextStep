@@ -1,4 +1,4 @@
-package org.example.handler;
+package org.example.webserver.service.variable;
 
 public enum HTTPMethod {
     GET("GET"),

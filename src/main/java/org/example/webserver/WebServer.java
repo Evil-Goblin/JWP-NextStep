@@ -1,56 +1,45 @@
 package org.example.webserver;
 
-import org.example.handler.controller.IndexController;
-import org.example.handler.request.Request;
-import org.example.handler.request.RequestHandler;
-import org.example.handler.response.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
+import org.example.webserver.service.RequestProcessor;
+import org.example.webserver.service.request.RequestResolver;
+import org.example.webserver.service.servlet.DispatcherServlet;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Slf4j
 public class WebServer {
+    private final int port;
 
-    public static final Logger log = LoggerFactory.getLogger(WebServer.class);
+    private final ExecutorService executorService;
 
-    public static final String  WEBAPP_PATH = "./src/main/webapp";
-    public static final int DEFAULT_PORT = 8080;
-    public static final int DEFAULT_POOL_SIZE = 50;
-    public static Map<String, Method> CONTROLLER_MAP = new HashMap<>();
+    private final RequestResolver requestResolver;
 
-    public static void initializeController() {
-        try {
-            CONTROLLER_MAP.put("/index.html", IndexController.class.getMethod("IndexPage", Request.class, Response.class));
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+    private final DispatcherServlet dispatcherServlet;
+
+    @Builder
+    public WebServer(int port, int poolSize, RequestResolver requestResolver, DispatcherServlet dispatcherServlet) {
+        this.port = port;
+        this.executorService = Executors.newFixedThreadPool(poolSize);
+        this.requestResolver = requestResolver;
+        this.dispatcherServlet = dispatcherServlet;
     }
 
-    public static void main(String[] args) throws IOException {
-        int serverPort = DEFAULT_PORT;
-        if (args != null && args.length != 0) {
-            serverPort = Integer.parseInt(args[0]);
-        }
-
-        initializeController();
-
-        ExecutorService executorService = Executors.newFixedThreadPool(DEFAULT_POOL_SIZE);
-
-        try (ServerSocket listenSocket = new ServerSocket(serverPort)) {
-            log.info("Web Application Server Started {} port.", serverPort);
-
+    public void runServer() {
+        try (ServerSocket listenSocket = new ServerSocket(port)) {
+            log.info("Web Application Server Started {} port.", port);
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-                RequestHandler requestHandler = new RequestHandler(connection);
-                executorService.submit(requestHandler);
+                RequestProcessor requestProcess = new RequestProcessor(connection, requestResolver, dispatcherServlet);
+                executorService.submit(requestProcess);
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

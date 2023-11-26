@@ -1,7 +1,6 @@
-package org.example.handler.request;
+package org.example.webserver.service.variable;
 
-public class RequestProperties {
-
+public class HeaderProperties {
     public static final String HOST = "Host";
     public static final String USER_AGENT = "User-Agent";
     public static final String ACCEPT = "Accept";
@@ -16,4 +15,3 @@ public class RequestProperties {
 
     public static final String CONTENT_TYPE = "Content-Type";
 }
-

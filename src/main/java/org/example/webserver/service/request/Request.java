@@ -1,18 +1,17 @@
-package org.example.handler.request;
+package org.example.webserver.service.request;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
-import org.example.handler.HTTPMethod;
+import org.example.webserver.service.variable.HTTPMethod;
 
 import java.util.Map;
 
 @Getter
 @Builder
-@ToString
 public class Request {
     HTTPMethod method;
-    String url;
+    RequestUrl requestUrl;
+    String pathVariable;
     String version;
 
     String accept;
@@ -25,4 +24,10 @@ public class Request {
     Map<String, Integer> sec_ch_ua;
 
     String body;
+
+    public String getRequestURI() {
+        return requestUrl.getUri();
+    }
+    public Map<String, String> getQueryParam() {
+        return requestUrl.getQueryParam();}
 }
