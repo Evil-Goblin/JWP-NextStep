@@ -1,9 +1,11 @@
 package org.example.Calc;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StringCalcTest {
@@ -27,19 +29,19 @@ class StringCalcTest {
         String test4 = "1,2:3";
         String test5 = "//;\n1;2;3";
 
-        assertEquals(0, calc.Calc(test1));
-        assertEquals(3, calc.Calc(test2));
-        assertEquals(6, calc.Calc(test3));
-        assertEquals(6, calc.Calc(test4));
-        assertEquals(6, calc.Calc(test5));
+        assertThat(calc.Calc(test1)).isEqualTo(0);
+        assertThat(calc.Calc(test2)).isEqualTo(3);
+        assertThat(calc.Calc(test3)).isEqualTo(6);
+        assertThat(calc.Calc(test4)).isEqualTo(6);
+        assertThat(calc.Calc(test5)).isEqualTo(6);
     }
 
     @Test
     void extractToken() {
         String test1 = "//;\n1;2;3";
 
-        assertEquals("1;2;3", calc.ExtractToken(test1));
-        assertEquals(";", calc.getToken());
+        assertThat(calc.ExtractToken(test1)).isEqualTo("1;2;3");
+        assertThat(calc.getToken()).isEqualTo(";");
     }
 
     @Test
@@ -48,17 +50,16 @@ class StringCalcTest {
         String empty = "";
         String other = "asdf";
 
-        assertTrue(calc.ValidateCmd(NULL));
-        assertTrue(calc.ValidateCmd(empty));
-        assertFalse(calc.ValidateCmd(other));
+        assertThat(calc.ValidateCmd(NULL)).isTrue();
+        assertThat(calc.ValidateCmd(empty)).isTrue();
+        assertThat(calc.ValidateCmd(other)).isFalse();
     }
 
     @Test
     void add_negative() throws Exception {
         String negative = "-1,2,3";
 
-        assertThrows(RuntimeException.class, () -> {
-            calc.Calc(negative);
-        });
+        assertThatThrownBy(() -> calc.Calc(negative))
+                .isInstanceOf(RuntimeException.class);
     }
 }
