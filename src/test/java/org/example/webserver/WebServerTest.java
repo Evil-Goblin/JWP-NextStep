@@ -9,6 +9,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Objects;
 
@@ -86,5 +88,12 @@ class WebServerTest {
                 iteratePackage(file);
             }
         }
+    }
+
+    @Test
+    @DisplayName("Hint3 의 ./path 로 파일을 읽는 테스트")
+    void readFileBasedHint3() throws IOException {
+        byte[] body = Files.readAllBytes(new File(getClass().getClassLoader().getResource("webapp/index.html").getFile()).toPath());
+        System.out.println("body = " + body.toString());
     }
 }

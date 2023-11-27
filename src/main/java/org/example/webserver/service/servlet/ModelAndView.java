@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,12 +43,9 @@ public class ModelAndView {
     }
 
     private void setContentFromFile(Response response, File file) {
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            int contentLength = fileInputStream.available();
-            byte[] content = new byte[contentLength];
-            fileInputStream.read(content);
-
-            response.setContent(content, contentLength);
+        try {
+            byte[] body = Files.readAllBytes(file.toPath());
+            response.setContent(body, body.length);
         } catch (IOException e) {
             throw new InternalException(e);
         }
