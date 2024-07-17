@@ -2,6 +2,7 @@ package org.example.webserver.service.servlet;
 
 import org.example.webserver.service.exception.InternalException;
 import org.example.webserver.service.response.Response;
+import org.example.webserver.service.variable.ContentType;
 import org.example.webserver.service.variable.StatusCode;
 
 import java.io.File;
@@ -18,15 +19,25 @@ import static org.example.webserver.service.variable.ContentType.TEXT_HTML_VALUE
 
 public class ModelAndView {
     private final String view;
+    private final ContentType contentType;
+    private final StatusCode statusCode;
     private final Map<String, String> model = new HashMap<>();
 
-    public ModelAndView(String view) {
+    public static ModelAndView of(String view) {
+        ContentType contentType = ContentType.from(view);
+        StatusCode statusCode = StatusCode.isRedirect(view);
+        return new ModelAndView(view, contentType, statusCode);
+    }
+
+    public ModelAndView(String view, ContentType contentType, StatusCode statusCode) {
         this.view = view;
+        this.contentType = contentType;
+        this.statusCode = statusCode;
     }
 
     public void loadView(Response response) {
-        response.setStatusCode(StatusCode.OK);
-        response.setContentType(TEXT_HTML_VALUE.getValue());
+        response.setStatusCode(statusCode);
+        response.setContentType(contentType.getValue());
         String viewFile = Paths.get("webapp", view).toString();
         URL resource = getClass().getClassLoader().getResource(viewFile);
         if (resource == null) {

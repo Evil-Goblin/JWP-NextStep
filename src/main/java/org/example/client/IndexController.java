@@ -13,6 +13,6 @@ public class IndexController implements QueryParamHandler {
 
     @Override
     public ModelAndView process(Map<String, String> queryParam) {
-        return new ModelAndView("index.html");
+        return ModelAndView.of("index.html");
     }
 }

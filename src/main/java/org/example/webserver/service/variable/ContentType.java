@@ -33,12 +33,22 @@ public enum ContentType {
     TEXT_HTML_VALUE("text/html"),
     TEXT_MARKDOWN_VALUE("text/markdown"),
     TEXT_PLAIN_VALUE("text/plain"),
-    TEXT_XML_VALUE("text/xml");
-
+    TEXT_XML_VALUE("text/xml"),
+    TEXT_CSS_VALUE("text/css");
 
     private final String value;
 
     ContentType(String value) {
         this.value = value;
+    }
+
+    public static ContentType from(String viewName) {
+        String fileType = viewName.substring(viewName.lastIndexOf(".") + 1).toLowerCase();
+
+        switch (fileType) {
+            case "html": return TEXT_HTML_VALUE;
+            case "css": return TEXT_CSS_VALUE;
+            default: return TEXT_PLAIN_VALUE;
+        }
     }
 }

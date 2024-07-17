@@ -23,6 +23,6 @@ public class UserCreateController implements QueryParamHandler {
         log.info("[UserCreateController] name: {}", name);
         log.info("[UserCreateController] email: {}", email);
 
-        return new ModelAndView("index.html");
+        return ModelAndView.of("index.html");
     }
 }

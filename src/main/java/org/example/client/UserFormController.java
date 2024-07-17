@@ -11,6 +11,6 @@ import java.util.Map;
 public class UserFormController implements QueryParamHandler {
     @Override
     public ModelAndView process(Map<String, String> queryParam) {
-        return new ModelAndView("user/form.html");
+        return ModelAndView.of("user/form.html");
     }
 }

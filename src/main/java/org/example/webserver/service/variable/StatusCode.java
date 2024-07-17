@@ -12,6 +12,8 @@ public enum StatusCode {
     RESET_CONTENT(205, "205 Reset Content"),
     PARTIAL_CONTENT(206, "206 Partial Content"),
 
+    FOUND(302, "302 Found"),
+
     NOT_FOUND(404, "404 Not Found"),
 
     INTERNAL_SERVER_ERROR(500, "500 Internal Server Error");
@@ -25,5 +27,12 @@ public enum StatusCode {
         this.phrase = phrase;
     }
 
+    public static StatusCode isRedirect(String view) {
+        if (view.startsWith("redirect:")) {
+            return FOUND;
+        }
+
+        return OK;
+    }
 }
 

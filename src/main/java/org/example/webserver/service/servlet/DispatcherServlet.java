@@ -14,12 +14,19 @@ public class DispatcherServlet {
     private final List<HandlerAdapter> handlerAdaptor = new ArrayList<>();
     private final Map<String, Object> handlerMapping = new HashMap<>();
 
+    private final StaticResolver staticResolver;
+
+    public DispatcherServlet(StaticResolver staticResolver) {
+        this.staticResolver = staticResolver;
+    }
+
     public ModelAndView doDispatcher(Request request, Response response) {
         String requestURI = request.getRequestURI();
 
         Object handler = handlerMapping.get(requestURI);
         if (handler == null) {
-            throw new NotFoundException("No Handler for Servlet");
+            // static resolver
+            return staticResolver.resolve(requestURI);
         }
 
         HandlerAdapter handleAdapter = getHandleAdapter(handler);
