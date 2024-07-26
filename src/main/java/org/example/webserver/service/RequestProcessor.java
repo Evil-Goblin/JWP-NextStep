@@ -7,7 +7,7 @@ import org.example.webserver.service.request.Request;
 import org.example.webserver.service.request.RequestResolver;
 import org.example.webserver.service.response.Response;
 import org.example.webserver.service.servlet.DispatcherServlet;
-import org.example.webserver.service.servlet.ModelAndView;
+import org.example.webserver.service.servlet.modelandview.ModelAndView;
 
 import java.io.IOException;
 import java.io.InputStream;

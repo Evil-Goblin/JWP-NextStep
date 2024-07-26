@@ -1,4 +1,4 @@
-package org.example.webserver.model.user;
+package org.example.client.model.user;
 
 import lombok.Builder;
 import lombok.Getter;

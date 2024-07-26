@@ -4,8 +4,8 @@ import org.example.webserver.annotations.RequestMapping;
 import org.example.webserver.service.exception.NotFoundException;
 import org.example.webserver.service.request.Request;
 import org.example.webserver.service.response.Response;
-import org.example.webserver.service.servlet.ModelAndView;
 import org.example.webserver.service.servlet.handlertype.QueryParamHandler;
+import org.example.webserver.service.servlet.modelandview.ModelAndView;
 
 import java.util.Arrays;
 
@@ -19,7 +19,7 @@ public class MethodMatchAdapter extends QueryParamAdapter {
 
         QueryParamHandler queryParamHandler = (QueryParamHandler) handler;
 
-        return queryParamHandler.process(request.getQueryParam());
+        return queryParamHandler.process(request.getBody());
     }
 
     private boolean isMethodMatch(Request request, Object handler) {

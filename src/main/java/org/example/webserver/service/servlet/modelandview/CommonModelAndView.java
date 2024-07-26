@@ -1,4 +1,4 @@
-package org.example.webserver.service.servlet;
+package org.example.webserver.service.servlet.modelandview;
 
 import org.example.webserver.service.exception.InternalException;
 import org.example.webserver.service.response.Response;
@@ -6,7 +6,6 @@ import org.example.webserver.service.variable.ContentType;
 import org.example.webserver.service.variable.StatusCode;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -15,29 +14,17 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.example.webserver.service.variable.ContentType.TEXT_HTML_VALUE;
-
-public class ModelAndView {
+public class CommonModelAndView extends ModelAndView {
     private final String view;
-    private final ContentType contentType;
-    private final StatusCode statusCode;
     private final Map<String, String> model = new HashMap<>();
 
-    public static ModelAndView of(String view) {
-        ContentType contentType = ContentType.from(view);
-        StatusCode statusCode = StatusCode.isRedirect(view);
-        return new ModelAndView(view, contentType, statusCode);
-    }
-
-    public ModelAndView(String view, ContentType contentType, StatusCode statusCode) {
+    public CommonModelAndView(String view, ContentType contentType) {
+        super(contentType, StatusCode.OK);
         this.view = view;
-        this.contentType = contentType;
-        this.statusCode = statusCode;
     }
 
-    public void loadView(Response response) {
-        response.setStatusCode(statusCode);
-        response.setContentType(contentType.getValue());
+    @Override
+    void processView(Response response) {
         String viewFile = Paths.get("webapp", view).toString();
         URL resource = getClass().getClassLoader().getResource(viewFile);
         if (resource == null) {

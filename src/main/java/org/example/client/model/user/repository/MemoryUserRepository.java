@@ -1,7 +1,7 @@
-package org.example.webserver.model.user.repository;
+package org.example.client.model.user.repository;
 
+import org.example.client.model.user.User;
 import org.example.webserver.model.exception.InvalidIdException;
-import org.example.webserver.model.user.User;
 import org.example.webserver.util.assertion.Assert;
 import org.example.webserver.util.idgenerator.IdGenerator;
 

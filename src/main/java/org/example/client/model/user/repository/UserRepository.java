@@ -1,7 +1,7 @@
-package org.example.webserver.model.user.repository;
+package org.example.client.model.user.repository;
 
 import org.example.webserver.model.Repository;
-import org.example.webserver.model.user.User;
+import org.example.client.model.user.User;
 
 public interface UserRepository extends Repository<User, Long> {
 

@@ -1,7 +1,7 @@
 package org.example.webserver.service.servlet;
 
-import org.example.webserver.service.exception.InternalException;
 import org.example.webserver.service.exception.NotFoundException;
+import org.example.webserver.service.servlet.modelandview.ModelAndView;
 
 import java.net.URL;
 import java.nio.file.Paths;

@@ -2,16 +2,16 @@ package org.example.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.webserver.annotations.RequestMapping;
-import org.example.webserver.model.user.User;
-import org.example.webserver.model.user.repository.UserRepository;
-import org.example.webserver.service.servlet.ModelAndView;
+import org.example.client.model.user.User;
+import org.example.client.model.user.repository.UserRepository;
 import org.example.webserver.service.servlet.handlertype.QueryParamHandler;
+import org.example.webserver.service.servlet.modelandview.ModelAndView;
 import org.example.webserver.service.variable.HTTPMethod;
 
 import java.util.Map;
 
 @Slf4j
-@RequestMapping(method = HTTPMethod.GET)
+@RequestMapping(method = HTTPMethod.POST)
 public class UserCreateController implements QueryParamHandler {
 
     private final UserRepository userRepository;
@@ -40,6 +40,6 @@ public class UserCreateController implements QueryParamHandler {
 
         userRepository.save(user);
 
-        return ModelAndView.of("index.html");
+        return ModelAndView.of("redirect:/index.html");
     }
 }

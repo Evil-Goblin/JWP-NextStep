@@ -21,10 +21,14 @@ public class Response {
     private int contentLength;
     private byte[] content;
 
+    private boolean isRedirect;
+    private String location;
+
     private final DataOutputStream outputStream;
 
     public Response(String version, OutputStream outputStream) {
         this.version = version;
+        this.isRedirect = false;
         this.outputStream = new DataOutputStream(outputStream);
     }
 
@@ -37,18 +41,33 @@ public class Response {
         this.contentLength = contentLength;
     }
 
+    public void setLocation(String location) {
+        this.isRedirect = true;
+        this.location = location;
+    }
+
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
     public void send() throws IOException {
         outputStream.writeBytes(String.format("%s %s\r\n", version, statusCode.getPhrase()));
-        outputStream.writeBytes("Content-Type: " + contentType + "\r\n");
-        outputStream.writeBytes("Content-Length: " + contentLength + "\r\n");
-        outputStream.writeBytes("\r\n");
-        outputStream.write(content, 0, contentLength);
-        outputStream.writeBytes("\r\n");
+
+        fillContent();
+
         outputStream.flush();
+    }
+
+    private void fillContent() throws IOException {
+        if (isRedirect) {
+            outputStream.writeBytes("Location: " + location);
+        } else {
+            outputStream.writeBytes("Content-Type: " + contentType + "\r\n");
+            outputStream.writeBytes("Content-Length: " + contentLength + "\r\n");
+            outputStream.writeBytes("\r\n");
+            outputStream.write(content, 0, contentLength);
+            outputStream.writeBytes("\r\n");
+        }
     }
 
     public void response500Error(Request request) {
