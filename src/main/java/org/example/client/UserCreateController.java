@@ -3,7 +3,7 @@ package org.example.client;
 import lombok.extern.slf4j.Slf4j;
 import org.example.webserver.annotations.RequestMapping;
 import org.example.client.model.user.User;
-import org.example.client.model.user.repository.UserRepository;
+import org.example.client.model.user.UserRepository;
 import org.example.webserver.service.servlet.handlertype.QueryParamHandler;
 import org.example.webserver.service.servlet.modelandview.ModelAndView;
 import org.example.webserver.service.variable.HTTPMethod;

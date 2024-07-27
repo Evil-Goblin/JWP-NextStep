@@ -2,7 +2,7 @@ package org.example.client;
 
 import org.assertj.core.api.Assertions;
 import org.example.client.model.user.User;
-import org.example.client.model.user.repository.UserRepository;
+import org.example.client.model.user.UserRepository;
 import org.example.webserver.service.servlet.modelandview.ModelAndView;
 import org.example.webserver.service.servlet.modelandview.RedirectModelAndView;
 import org.junit.jupiter.api.Test;
