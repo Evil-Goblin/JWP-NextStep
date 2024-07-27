@@ -1,5 +1,6 @@
 package org.example.webserver.model;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface Repository<T, U> {
@@ -10,4 +11,6 @@ public interface Repository<T, U> {
     T update(T t);
 
     T delete(T t);
+
+    List<T> findAll();
 }

@@ -12,6 +12,7 @@ public class HeaderProperties {
     public static final String IF_MODIFIED_SINCE = "If-Modified-Since";
     public static final String IF_NONE_MATCH = "If-None-Match";
     public static final String CACHE_CONTROL = "Cache-Control";
+    public static final String COOKIE = "Cookie";
 
     public static final String CONTENT_TYPE = "Content-Type";
 }

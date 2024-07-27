@@ -7,6 +7,8 @@ import org.example.webserver.service.variable.StatusCode;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.example.webserver.service.variable.ContentType.TEXT_HTML_VALUE;
 import static org.example.webserver.service.variable.StatusCode.INTERNAL_SERVER_ERROR;
@@ -23,6 +25,8 @@ public class Response {
 
     private boolean isRedirect;
     private String location;
+
+    private final Map<String, String> cookies = new HashMap<>();
 
     private final DataOutputStream outputStream;
 
@@ -46,6 +50,10 @@ public class Response {
         this.location = location;
     }
 
+    public void setCookie(String key, String value) {
+        cookies.put(key, value);
+    }
+
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
@@ -63,6 +71,11 @@ public class Response {
             outputStream.writeBytes("Location: " + location);
         } else {
             outputStream.writeBytes("Content-Type: " + contentType + "\r\n");
+
+            for (Map.Entry<String, String> entry : cookies.entrySet()) {
+                outputStream.writeBytes("Set-Cookie: " + entry.getKey() + "=" + entry.getValue() + "\n");
+            }
+
             outputStream.writeBytes("Content-Length: " + contentLength + "\r\n");
             outputStream.writeBytes("\r\n");
             outputStream.write(content, 0, contentLength);

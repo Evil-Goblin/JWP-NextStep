@@ -7,8 +7,7 @@ import org.example.webserver.service.variable.HTTPMethod;
 import org.example.webserver.util.parameterresolver.JsonResolver;
 import org.example.webserver.util.parameterresolver.QueryParamResolver;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 public class Request {
@@ -26,10 +25,12 @@ public class Request {
 
     Map<String, Integer> sec_ch_ua;
 
+    Map<String, String> cookies;
+
     Map<String, String> body;
 
     @Builder
-    public Request(HTTPMethod method, RequestUrl requestUrl, String pathVariable, String version, String accept, String contentType, String host, String connection, String userAgent, String acceptEncoding, Map<String, Integer> sec_ch_ua, String body) {
+    public Request(HTTPMethod method, RequestUrl requestUrl, String pathVariable, String version, String accept, String contentType, String host, String connection, String userAgent, String acceptEncoding, Map<String, Integer> sec_ch_ua, String cookies, String body) {
         this.method = method;
         this.requestUrl = requestUrl;
         this.pathVariable = pathVariable;
@@ -41,6 +42,9 @@ public class Request {
         this.userAgent = userAgent;
         this.acceptEncoding = acceptEncoding;
         this.sec_ch_ua = sec_ch_ua;
+        this.cookies = new HashMap<>();
+
+        parseCookie(cookies);
 
         if (method == HTTPMethod.POST) {
             this.body = switch (this.contentType) {
@@ -50,6 +54,17 @@ public class Request {
             };
         } else {
             this.body = requestUrl.getQueryParam();
+        }
+    }
+
+    private void parseCookie(String cookies) {
+        if (cookies != null) {
+            List.of(cookies.split("; ")).forEach(s -> {
+                String[] split = s.split("=");
+                if (split.length == 2) {
+                    this.cookies.put(split[0].trim(), split[1].trim());
+                }
+            });
         }
     }
 

@@ -5,6 +5,7 @@ import org.example.webserver.util.assertion.Assert;
 import org.example.webserver.util.idgenerator.IdGenerator;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -12,6 +13,7 @@ public class MemoryUserRepository implements UserRepository {
 
     private final IdGenerator<Long> idGenerator;
     private final Map<Long, User> repository = new HashMap<>();
+    private final Map<String, User> byUserId = new HashMap<>();
 
     public MemoryUserRepository(IdGenerator<Long> idGenerator) {
         this.idGenerator = idGenerator;
@@ -48,6 +50,7 @@ public class MemoryUserRepository implements UserRepository {
     private User persist(User user) {
         user.setId(idGenerator.getNext());
         repository.put(user.getId(), user);
+        byUserId.put(user.getUserId(), user);
 
         return user;
     }
@@ -74,5 +77,20 @@ public class MemoryUserRepository implements UserRepository {
         Assert.notNull(id, "Id must not be null");
 
         return findById(id).orElseThrow(() -> new InvalidIdException("User Id is not persisted"));
+    }
+
+    @Override
+    public Optional<User> findByUserId(String userId) {
+        User user = byUserId.get(userId);
+        if (user == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(user);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return repository.values().stream().toList();
     }
 }

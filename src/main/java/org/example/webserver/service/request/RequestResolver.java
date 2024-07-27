@@ -61,6 +61,7 @@ public class RequestResolver {
                 .connection(header.getOrDefault(HeaderProperties.CONNECTION, ""))
                 .userAgent(header.getOrDefault(HeaderProperties.USER_AGENT, ""))
                 .acceptEncoding(header.getOrDefault(HeaderProperties.ACCEPT_ENCODING, ""))
+                .cookies(header.getOrDefault(HeaderProperties.COOKIE, ""))
                 .body(body)
                 .build();
     }

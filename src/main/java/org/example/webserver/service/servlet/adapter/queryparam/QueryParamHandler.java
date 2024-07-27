@@ -1,4 +1,4 @@
-package org.example.webserver.service.servlet.handlertype;
+package org.example.webserver.service.servlet.adapter.queryparam;
 
 import org.example.webserver.service.servlet.modelandview.ModelAndView;
 

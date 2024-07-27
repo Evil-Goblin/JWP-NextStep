@@ -3,6 +3,7 @@ package org.example.client.model.user;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.client.model.user.exception.InvalidPasswordException;
 
 @Setter
 @Getter
@@ -17,5 +18,11 @@ public class User {
         this.userId = userId;
         this.password = password;
         this.name = name;
+    }
+
+    public void passwordValidation(String password) {
+        if (!this.password.equals(password)) {
+            throw new InvalidPasswordException("Invalid password");
+        }
     }
 }
