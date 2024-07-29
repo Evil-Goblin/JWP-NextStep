@@ -69,17 +69,26 @@ public class Response {
         if (isRedirect) {
             outputStream.writeBytes("Location: " + location);
         } else {
-            outputStream.writeBytes("Content-Type: " + contentType + "\r\n");
+            writeHeader();
 
-            for (Map.Entry<String, String> entry : cookies.entrySet()) {
-                outputStream.writeBytes("Set-Cookie: " + entry.getKey() + "=" + entry.getValue() + "\n");
-            }
-
-            outputStream.writeBytes("Content-Length: " + contentLength + "\r\n");
-            outputStream.writeBytes("\r\n");
-            outputStream.write(content, 0, contentLength);
-            outputStream.writeBytes("\r\n");
+            writeBody();
         }
+    }
+
+    private void writeBody() throws IOException {
+        outputStream.writeBytes("\r\n");
+        outputStream.write(content, 0, contentLength);
+        outputStream.writeBytes("\r\n");
+    }
+
+    private void writeHeader() throws IOException {
+        outputStream.writeBytes("Content-Type: " + contentType + "\r\n");
+
+        for (Map.Entry<String, String> entry : cookies.entrySet()) {
+            outputStream.writeBytes("Set-Cookie: " + entry.getKey() + "=" + entry.getValue() + "\n");
+        }
+
+        outputStream.writeBytes("Content-Length: " + contentLength + "\r\n");
     }
 
     public void response500Error(Request request) {
