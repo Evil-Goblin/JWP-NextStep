@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.client.controller.IndexController;
 import org.example.client.controller.UserCreateController;
 import org.example.client.controller.UserListController;
 import org.example.client.controller.UserLoginController;
@@ -24,7 +25,7 @@ public class Main {
         dispatcherServlet.addAdapter(new QueryParamAdapter());
         dispatcherServlet.addAdapter(new QueryParamResponseAdapter());
         dispatcherServlet.addAdapter(new QueryParamRequestAdapter());
-//        dispatcherServlet.addHandler("/index.html", new IndexController());
+        dispatcherServlet.addHandler("/", new IndexController());
 //        dispatcherServlet.addHandler("/user/form.html", new UserFormController());
         dispatcherServlet.addHandler("/user/create", new UserCreateController(memoryUserRepository));
         dispatcherServlet.addHandler("/user/login", new UserLoginController(userService));
