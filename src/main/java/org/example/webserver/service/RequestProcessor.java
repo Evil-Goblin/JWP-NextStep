@@ -8,6 +8,7 @@ import org.example.webserver.service.request.RequestResolver;
 import org.example.webserver.service.response.Response;
 import org.example.webserver.service.servlet.DispatcherServlet;
 import org.example.webserver.service.servlet.modelandview.ModelAndView;
+import org.slf4j.MDC;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +17,8 @@ import java.net.Socket;
 
 @Slf4j
 public class RequestProcessor implements Runnable {
+
+    public static final String UUID_KEYWORD = "UUID";
 
     private final Socket connection;
     private final RequestResolver requestResolver;
@@ -30,6 +33,9 @@ public class RequestProcessor implements Runnable {
 
     @Override
     public void run() {
+        String uuid = java.util.UUID.randomUUID().toString();
+        MDC.put(UUID_KEYWORD, uuid);
+
         try (InputStream inputStream = connection.getInputStream();
              OutputStream outputStream = connection.getOutputStream()) {
             Request request = requestResolver.parse(inputStream);
@@ -38,6 +44,8 @@ public class RequestProcessor implements Runnable {
             processServlet(request, response);
         } catch (IOException e) {
             log.error("Servlet Failed", e);
+        } finally {
+            MDC.remove(UUID_KEYWORD);
         }
     }
 

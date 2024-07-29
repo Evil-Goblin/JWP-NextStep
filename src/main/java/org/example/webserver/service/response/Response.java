@@ -1,6 +1,5 @@
 package org.example.webserver.service.response;
 
-import org.example.webserver.service.exception.InternalException;
 import org.example.webserver.service.request.Request;
 import org.example.webserver.service.variable.StatusCode;
 

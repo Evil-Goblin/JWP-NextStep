@@ -7,7 +7,10 @@ import org.example.webserver.service.variable.HTTPMethod;
 import org.example.webserver.util.parameterresolver.JsonResolver;
 import org.example.webserver.util.parameterresolver.QueryParamResolver;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Getter
 public class Request {

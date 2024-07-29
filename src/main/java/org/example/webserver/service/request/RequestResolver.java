@@ -1,6 +1,6 @@
 package org.example.webserver.service.request;
 
-import org.example.webserver.service.exception.InternalException;
+import lombok.extern.slf4j.Slf4j;
 import org.example.webserver.service.variable.HTTPMethod;
 import org.example.webserver.service.variable.HeaderProperties;
 
@@ -8,16 +8,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.AbstractMap;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
+@Slf4j
 public class RequestResolver {
 
     private final Pattern headerPattern = Pattern.compile("(.*): (.*)");
@@ -26,6 +22,8 @@ public class RequestResolver {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
         String firstLine = bufferedReader.readLine();
+        log.debug("[RequestLine]: {}", firstLine);
+
         String[] split = firstLine.split("\\s");
         HTTPMethod method = HTTPMethod.valueOf(split[0]);
         String url = split[1];
@@ -38,6 +36,8 @@ public class RequestResolver {
         for (String line = bufferedReader.readLine();
              !"".equals(line);
              line = bufferedReader.readLine()) {
+            log.debug("[RequestHeader]: {}", line);
+
             Matcher matcher = headerPattern.matcher(line);
             if (matcher.find()) {
                 String key = matcher.group(1);
