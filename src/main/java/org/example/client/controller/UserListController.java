@@ -63,7 +63,7 @@ public class UserListController implements QueryParamRequestHandler {
     }
 
     private void writeFooter(StringBuilder stringBuilder) {
-        stringBuilder.append("<script src=\"/js/jquery-2.2.0.min.js\"></script>\n" +
+        stringBuilder.append("<script src=\"/js/jquery-3.7.1.min.js\"></script>\n" +
                 "<script src=\"/js/bootstrap.min.js\"></script>\n" +
                 "<script src=\"/js/scripts.js\"></script>\n" +
                 "</body>\n" +
