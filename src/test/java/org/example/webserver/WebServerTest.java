@@ -1,20 +1,50 @@
 package org.example.webserver;
 
+import org.example.webserver.service.request.Request;
+import org.example.webserver.service.request.RequestResolver;
+import org.example.webserver.service.variable.HTTPMethod;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Objects;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class WebServerTest {
+
+    private final TestUtils testUtils = new TestUtils();
+    private final String POST_CREATE_USER_TEST = "POST_CREATE_USER";
+
+    @Test
+    void POST_CREATE_USER_TEST_파일을_불러온다() {
+        File resourceByFileName = testUtils.getResourceByFileName(POST_CREATE_USER_TEST);
+
+        assertThat(resourceByFileName).isNotNull();
+    }
+
+    @Test
+    void POST_CREATE_USER_TEST_파일로부터_Request_객체를_생성한다() throws IOException {
+        File resourceByFileName = testUtils.getResourceByFileName(POST_CREATE_USER_TEST);
+        RequestResolver requestResolver = new RequestResolver();
+
+        InputStream in = new FileInputStream(resourceByFileName);
+
+        Request request = requestResolver.parse(in);
+
+        assertThat(request.getMethod()).isEqualTo(HTTPMethod.POST);
+        assertThat(request.getRequestURI()).isEqualTo("/user/create");
+
+        Map<String, String> body = request.getBody();
+
+        assertThat(body).isNotNull();
+        assertThat(body.get("userId")).isEqualTo("test");
+    }
 
     @Test
     void IndexPage_메소드를_리턴한다() throws NoSuchMethodException {
