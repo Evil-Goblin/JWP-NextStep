@@ -23,6 +23,7 @@ public enum ContentType {
     APPLICATION_STREAM_JSON_VALUE("application/stream+json"),
     APPLICATION_XHTML_XML_VALUE("application/xhtml+xml"),
     APPLICATION_XML_VALUE("application/xml"),
+    APPLICATION_JAVASCRIPT_VALUE("application/javascript"),
     IMAGE_GIF_VALUE("image/gif"),
     IMAGE_JPEG_VALUE("image/jpeg"),
     IMAGE_PNG_VALUE("image/png"),
@@ -48,6 +49,7 @@ public enum ContentType {
         return switch (fileType) {
             case "html" -> TEXT_HTML_VALUE;
             case "css" -> TEXT_CSS_VALUE;
+            case "js" -> APPLICATION_JAVASCRIPT_VALUE;
             default -> TEXT_PLAIN_VALUE;
         };
     }
@@ -73,6 +75,7 @@ public enum ContentType {
             case "application/stream+json" -> APPLICATION_STREAM_JSON_VALUE;
             case "application/xhtml+xml" -> APPLICATION_XHTML_XML_VALUE;
             case "application/xml" -> APPLICATION_XML_VALUE;
+            case "application/javascript" -> APPLICATION_JAVASCRIPT_VALUE;
             case "image/gif" -> IMAGE_GIF_VALUE;
             case "image/jpeg" -> IMAGE_JPEG_VALUE;
             case "image/png" -> IMAGE_PNG_VALUE;
@@ -82,7 +85,6 @@ public enum ContentType {
             case "text/event-stream" -> TEXT_EVENT_STREAM_VALUE;
             case "text/html" -> TEXT_HTML_VALUE;
             case "text/markdown" -> TEXT_MARKDOWN_VALUE;
-            case "text/plain" -> TEXT_PLAIN_VALUE;
             case "text/xml" -> TEXT_XML_VALUE;
             case "text/css" -> TEXT_CSS_VALUE;
             default -> TEXT_PLAIN_VALUE;
