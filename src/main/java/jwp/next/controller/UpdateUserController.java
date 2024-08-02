@@ -1,52 +1,28 @@
 package jwp.next.controller;
 
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
+import jwp.core.db.DataBase;
+import jwp.core.mvc.Controller;
+import jwp.next.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jwp.core.db.DataBase;
-import jwp.next.model.User;
-import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
-
-@Slf4j
-public class UpdateUserController extends HttpServlet {
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String userId = req.getParameter("userId");
-        User user = findLoginedUserByUserId(req, userId);
-
-        req.setAttribute("user", user);
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/user/updateForm.jsp");
-        requestDispatcher.forward(req, resp);
-    }
+public class UpdateUserController implements Controller {
+    private static final Logger log = LoggerFactory.getLogger(UpdateUserController.class);
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String userId = req.getParameter("userId");
-        User user = findLoginedUserByUserId(req, userId);
-
-        User updateUser = User.builder()
-                .userId(userId)
-                .password(req.getParameter("password"))
-                .name(req.getParameter("name"))
-                .email(req.getParameter("email"))
-                .build();
-
-        log.debug("Update User : {}", updateUser);
-        user.update(updateUser);
-        resp.sendRedirect("/");
-    }
-
-    private User findLoginedUserByUserId(HttpServletRequest req, String userId) {
-        User user = DataBase.findUserById(userId);
-        if (user == null) {
-            throw new IllegalArgumentException("존재하지 않는 계정입니다.");
-        } else if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
+    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        User user = DataBase.findUserById(req.getParameter("userId"));
+        if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
-        return user;
+
+        User updateUser = new User(req.getParameter("userId"), req.getParameter("password"), req.getParameter("name"),
+                req.getParameter("email"));
+        log.debug("Update User : {}", updateUser);
+        user.update(updateUser);
+        return "redirect:/";
     }
 }
