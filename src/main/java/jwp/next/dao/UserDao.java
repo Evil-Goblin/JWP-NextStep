@@ -2,7 +2,6 @@ package jwp.next.dao;
 
 import jwp.core.jdbc.ConnectionManager;
 import jwp.core.jdbc.JdbcTemplate;
-import jwp.core.jdbc.SelectJdbcTemplate;
 import jwp.next.model.User;
 
 import java.sql.Connection;
@@ -14,13 +13,18 @@ import java.util.List;
 public class UserDao {
 
     public void insert(User user) throws SQLException {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate() {
+        JdbcTemplate<User> jdbcTemplate = new JdbcTemplate<>() {
             @Override
             protected void setValues(PreparedStatement pstmt) throws SQLException {
                 pstmt.setString(1, user.getUserId());
                 pstmt.setString(2, user.getPassword());
                 pstmt.setString(3, user.getName());
                 pstmt.setString(4, user.getEmail());
+            }
+
+            @Override
+            public User mapRow(ResultSet resultSet) throws SQLException {
+                return null;
             }
         };
         jdbcTemplate.update(createQueryForInsert());
@@ -31,13 +35,18 @@ public class UserDao {
     }
 
     public void update(User user) throws SQLException {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate() {
+        JdbcTemplate<User> jdbcTemplate = new JdbcTemplate<>() {
             @Override
             protected void setValues(PreparedStatement pstmt) throws SQLException {
                 pstmt.setString(1, user.getPassword());
                 pstmt.setString(2, user.getName());
                 pstmt.setString(3, user.getEmail());
                 pstmt.setString(4, user.getUserId());
+            }
+
+            @Override
+            public User mapRow(ResultSet resultSet) throws SQLException {
+                return null;
             }
         };
         jdbcTemplate.update(createQueryForUpdate());
@@ -48,7 +57,7 @@ public class UserDao {
     }
 
     public List<User> findAll() throws SQLException {
-        SelectJdbcTemplate<User> selectJdbcTemplate = new SelectJdbcTemplate<>() {
+        JdbcTemplate<User> selectJdbcTemplate = new JdbcTemplate<>() {
             @Override
             public void setValues(PreparedStatement preparedStatement) throws SQLException {
 
@@ -69,7 +78,7 @@ public class UserDao {
     }
 
     public User findByUserId(String userId) throws SQLException {
-        SelectJdbcTemplate<User> selectJdbcTemplate = new SelectJdbcTemplate<>() {
+        JdbcTemplate<User> selectJdbcTemplate = new JdbcTemplate<>() {
             @Override
             public void setValues(PreparedStatement preparedStatement) throws SQLException {
                 preparedStatement.setString(1, userId);
