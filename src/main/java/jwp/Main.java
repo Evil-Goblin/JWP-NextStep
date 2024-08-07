@@ -4,6 +4,7 @@ import jakarta.servlet.ServletRegistration;
 import jwp.core.mvc.DispatcherServlet;
 import jwp.core.web.filter.CharacterEncodingFilter;
 import jwp.core.web.filter.ResourceFilter;
+import jwp.core.web.filter.UUIDFilter;
 import jwp.next.support.context.ContextLoaderListener;
 import org.apache.catalina.servlets.DefaultServlet;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -15,6 +16,7 @@ public class Main {
         servletWebServerFactory.getWebServer(servletContext -> {
             servletContext.addListener(new ContextLoaderListener());
 
+            servletContext.addFilter("UUIDFilter", new UUIDFilter()).addMappingForUrlPatterns(null, false, "/*");
             servletContext.addFilter("CharacterEncodingFilter", new CharacterEncodingFilter()).addMappingForUrlPatterns(null, false, "/*");
             servletContext.addFilter("ResourceFilter", new ResourceFilter()).addMappingForUrlPatterns(null, false, "/*");
 

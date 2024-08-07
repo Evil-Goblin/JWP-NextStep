@@ -22,6 +22,21 @@ public class JdbcTemplate {
         update(sql, createPreparedStatementSetter(parameters));
     }
 
+    public void update(PreparedStatementCreator preparedStatementCreator, KeyHolder holder) {
+        try (Connection conn = ConnectionManager.getConnection()) {
+            PreparedStatement ps = preparedStatementCreator.createPreparedStatement(conn);
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                holder.setId(rs.getLong(1));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            throw new DataAccessException(e);
+        }
+    }
+
     public <T> T queryForObject(String sql, RowMapper<T> rowMapper, PreparedStatementSetter preparedStatementSetter) {
         List<T> list = query(sql, rowMapper, preparedStatementSetter);
         if (list.isEmpty()) return null;

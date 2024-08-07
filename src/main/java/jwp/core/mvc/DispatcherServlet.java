@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jwp.core.mvc.controller.Controller;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -30,8 +31,8 @@ public class DispatcherServlet extends HttpServlet {
 
         Controller controller = requestMapping.findController(requestURI);
         try {
-            String viewName = controller.execute(req, resp);
-            move(viewName, req, resp);
+            ModelAndView mv = controller.execute(req, resp);
+            mv.getView().render(mv.getModel(), req, resp);
         } catch (Throwable throwable) {
             log.error("Exception : {}", throwable);
             throw new ServletException(throwable.getMessage());

@@ -1,15 +1,16 @@
 package jwp.next.controller;
 
-import jwp.core.db.DataBase;
-import jwp.core.mvc.Controller;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jwp.core.mvc.ModelAndView;
+import jwp.core.mvc.controller.AbstractController;
+import jwp.next.dao.QuestionDao;
 
-public class HomeController implements Controller {
+public class HomeController extends AbstractController {
+    private final QuestionDao questionDao = new QuestionDao();
+
     @Override
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        req.setAttribute("users", DataBase.findAll());
-        return "home.jsp";
+    public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        return jspView("home.jsp").addObject("questions", questionDao.findAll());
     }
 }
