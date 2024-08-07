@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AddAnswerController extends AbstractController {
 
-    private final AnswerDao answerDao = new AnswerDao();
+    private final AnswerDao answerDao = AnswerDao.getInstance();
 
     @Override
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {

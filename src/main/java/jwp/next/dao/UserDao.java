@@ -2,12 +2,22 @@ package jwp.next.dao;
 
 import jwp.core.jdbc.JdbcTemplate;
 import jwp.next.model.User;
+import lombok.Getter;
 
 import java.util.List;
 
 public class UserDao {
 
-    private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    private static final UserDao INSTANCE = new UserDao();
+
+    public static UserDao getInstance() {
+        return INSTANCE;
+    }
+
+    private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
+
+    private UserDao() {
+    }
 
     public void insert(User user) {
         jdbcTemplate.update(createQueryForInsert(), user.getUserId(), user.getPassword(), user.getName(), user.getEmail());

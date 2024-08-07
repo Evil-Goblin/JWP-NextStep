@@ -7,7 +7,7 @@ import jwp.core.mvc.controller.AbstractController;
 import jwp.next.dao.QuestionDao;
 
 public class HomeController extends AbstractController {
-    private final QuestionDao questionDao = new QuestionDao();
+    private final QuestionDao questionDao = QuestionDao.getInstance();
 
     @Override
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {

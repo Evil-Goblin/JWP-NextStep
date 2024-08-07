@@ -10,10 +10,11 @@ import jwp.next.model.Result;
 import jwp.core.mvc.ModelAndView;
 
 public class DeleteAnswerController extends AbstractController {
+    private final AnswerDao answerDao = AnswerDao.getInstance();
+
     @Override
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         Long answerId = Long.parseLong(req.getParameter("answerId"));
-        AnswerDao answerDao = new AnswerDao();
 
         try {
             answerDao.delete(answerId);

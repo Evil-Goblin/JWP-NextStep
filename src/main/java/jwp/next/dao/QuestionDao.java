@@ -3,13 +3,23 @@ package jwp.next.dao;
 import jwp.core.jdbc.JdbcTemplate;
 import jwp.core.jdbc.RowMapper;
 import jwp.next.model.Question;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 public class QuestionDao {
-    private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    private static final QuestionDao INSTANCE = new QuestionDao();
+
+    public static QuestionDao getInstance() {
+        return INSTANCE;
+    }
+
+    private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
+
+    private QuestionDao() {
+    }
 
     public List<Question> findAll() {
         String sql = "SELECT questionId, writer, title, createdDate, countOfAnswer FROM QUESTIONS "

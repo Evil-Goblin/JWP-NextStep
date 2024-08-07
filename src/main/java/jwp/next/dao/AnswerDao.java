@@ -5,12 +5,22 @@ import jwp.core.jdbc.KeyHolder;
 import jwp.core.jdbc.PreparedStatementCreator;
 import jwp.core.jdbc.RowMapper;
 import jwp.next.model.Answer;
+import lombok.Getter;
 
 import java.sql.*;
 import java.util.List;
 
 public class AnswerDao {
-    private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    private static final AnswerDao INSTANCE = new AnswerDao();
+
+    public static AnswerDao getInstance() {
+        return INSTANCE;
+    }
+
+    private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
+
+    private AnswerDao() {
+    }
 
     public Answer insert(Answer answer) {
         String sql = "INSERT INTO ANSWERS (writer, contents, createdDate, questionId) VALUES (?, ?, ?, ?)";

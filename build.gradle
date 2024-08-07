@@ -31,6 +31,8 @@ dependencies {
     implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api'
     implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl'
 
+    implementation 'org.reflections:reflections:0.9.10'
+
     compileOnly "org.projectlombok:lombok:1.18.26"
     runtimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

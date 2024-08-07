@@ -1,5 +1,7 @@
 package jwp.core.jdbc;
 
+import lombok.Getter;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,6 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcTemplate {
+    private static final JdbcTemplate INSTANCE = new JdbcTemplate();
+
+    public static JdbcTemplate getInstance() {
+        return INSTANCE;
+    }
+
+    private JdbcTemplate() {
+    }
+
     public void update(String sql, PreparedStatementSetter preparedStatementSetter) {
         try (Connection con = ConnectionManager.getConnection();
              PreparedStatement pstmt = con.prepareStatement(sql)) {

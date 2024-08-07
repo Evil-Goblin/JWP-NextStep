@@ -1,7 +1,7 @@
 package jwp;
 
 import jakarta.servlet.ServletRegistration;
-import jwp.core.mvc.DispatcherServlet;
+import jwp.core.nmvc.DispatcherServlet;
 import jwp.core.web.filter.CharacterEncodingFilter;
 import jwp.core.web.filter.ResourceFilter;
 import jwp.core.web.filter.UUIDFilter;

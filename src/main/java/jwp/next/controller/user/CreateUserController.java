@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public class CreateUserController extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(CreateUserController.class);
-    private final UserDao userDao = new UserDao();
+    private final UserDao userDao = UserDao.getInstance();
 
     @Override
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
