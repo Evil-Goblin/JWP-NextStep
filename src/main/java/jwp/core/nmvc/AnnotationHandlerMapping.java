@@ -3,9 +3,10 @@ package jwp.core.nmvc;
 import jakarta.servlet.http.HttpServletRequest;
 import jwp.core.annotation.RequestMapping;
 import jwp.core.annotation.RequestMethod;
+import jwp.core.di.bean.BeanFactory;
+import jwp.core.di.bean.BeanScanner;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.ReflectionUtils;
-import org.reflections.Reflections;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -24,8 +25,12 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        ControllerScanner controllerScanner = new ControllerScanner(basePackage);
-        Map<Class<?>, Object> controllers = controllerScanner.getControllers();
+        BeanScanner beanScanner = new BeanScanner("jwp.next");
+        BeanFactory beanFactory = new BeanFactory(beanScanner.scan());
+        beanFactory.initialize();
+
+        Map<Class<?>, Object> controllers = beanFactory.getControllers();
+
         Set<Method> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
 
         requestMappingMethods.forEach(method -> {

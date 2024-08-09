@@ -14,7 +14,7 @@ class UserDaoTest {
 
     static ContextLoaderListener contextLoaderListener;
 
-    UserDao userDao = new UserDao();
+    UserDao userDao = UserDao.getInstance();
 
     @BeforeAll
     static void setUp() {

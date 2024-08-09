@@ -1,16 +1,15 @@
 package jwp.next.controller.qna;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jwp.core.jdbc.DataAccessException;
 import jwp.core.mvc.controller.AbstractController;
-import jwp.next.dao.AnswerDao;
+import jwp.next.dao.JdbcAnswerDao;
 import jwp.next.model.Result;
 import jwp.core.mvc.ModelAndView;
 
 public class DeleteAnswerController extends AbstractController {
-    private final AnswerDao answerDao = AnswerDao.getInstance();
+    private final JdbcAnswerDao answerDao = JdbcAnswerDao.getInstance();
 
     @Override
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
