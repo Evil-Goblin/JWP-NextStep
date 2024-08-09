@@ -2,6 +2,7 @@ package jwp.core.nmvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jwp.core.annotation.RequestMapping;
+import jwp.core.annotation.RequestMethod;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
@@ -48,6 +49,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
     @Override
     public HandlerExecution getHandler(HttpServletRequest request) {
-        return null;
+        String requestUri = request.getRequestURI();
+        RequestMethod requestMethod = RequestMethod.valueOf(request.getMethod().toUpperCase());
+        log.debug("requestUri : {}, requestMethod : {}", requestUri, requestMethod);
+        return handlerExecutions.get(new HandlerKey(requestUri, requestMethod));
     }
 }
