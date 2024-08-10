@@ -5,6 +5,10 @@ import jwp.core.annotation.RequestMapping;
 import jwp.core.annotation.RequestMethod;
 import jwp.core.di.bean.BeanFactory;
 import jwp.core.di.bean.BeanScanner;
+import jwp.core.di.inject.ConstructorInjector;
+import jwp.core.di.inject.FieldInjector;
+import jwp.core.di.inject.Injector;
+import jwp.core.di.inject.SetterInjector;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.ReflectionUtils;
 
@@ -27,6 +31,15 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     public void initialize() {
         BeanScanner beanScanner = new BeanScanner("jwp.next");
         BeanFactory beanFactory = new BeanFactory(beanScanner.scan());
+
+        Injector constructorInjector = new ConstructorInjector(beanFactory);
+        Injector fieldInjector = new FieldInjector(beanFactory);
+        Injector setterInjector = new SetterInjector(beanFactory);
+
+        beanFactory.addInjector(constructorInjector);
+        beanFactory.addInjector(fieldInjector);
+        beanFactory.addInjector(setterInjector);
+
         beanFactory.initialize();
 
         Map<Class<?>, Object> controllers = beanFactory.getControllers();

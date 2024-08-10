@@ -1,15 +1,18 @@
 package jwp.core.di.bean;
 
 import jwp.core.annotation.Inject;
-import org.reflections.ReflectionUtils;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Set;
+
+import static org.reflections.ReflectionUtils.*;
 
 public class BeanFactoryUtils {
 
     public static Constructor<?> getCreatableConstructor(Class<?> clazz) {
-        Set<Constructor> allConstructors = ReflectionUtils.getAllConstructors(clazz, constructor -> constructor.isAnnotationPresent(Inject.class));
+        Set<Constructor> allConstructors = getAllConstructors(clazz, withAnnotation(Inject.class));
         return allConstructors.stream().findFirst().orElseGet(() -> getNoArgsConstructor(clazz));
     }
 
@@ -34,5 +37,13 @@ public class BeanFactoryUtils {
         }
 
         throw new RuntimeException("Not found any interfaces for " + clazz);
+    }
+
+    public static Set<Field> getAllInjectableFields(Class<?> clazz) {
+        return getAllFields(clazz, withAnnotation(Inject.class));
+    }
+
+    public static Set<Method> getAllInjectableMethods(Class<?> clazz) {
+        return getAllMethods(clazz, withAnnotation(Inject.class));
     }
 }

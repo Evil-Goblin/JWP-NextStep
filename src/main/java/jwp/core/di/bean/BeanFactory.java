@@ -1,6 +1,7 @@
 package jwp.core.di.bean;
 
 import jwp.core.annotation.Controller;
+import jwp.core.di.inject.Injector;
 import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Constructor;
@@ -9,6 +10,7 @@ import java.util.*;
 public class BeanFactory {
     private final Set<Class<?>> preInstantiateBeans;
     private final Map<Class<?>, Object> beans = new HashMap<>();
+    private final List<Injector> injectors = new ArrayList<>();
 
     public BeanFactory(Set<Class<?>> preInstantiateBeans) {
         this.preInstantiateBeans = preInstantiateBeans;
@@ -22,6 +24,10 @@ public class BeanFactory {
         }
     }
 
+    public Object getBean(Class<?> beanClass) {
+        return beans.get(beanClass);
+    }
+
     public Map<Class<?>, Object> getControllers() {
         Map<Class<?>, Object> controllers = new HashMap<>();
         for (Class<?> clazz : beans.keySet()) {
@@ -32,18 +38,28 @@ public class BeanFactory {
         return controllers;
     }
 
-    private Object instantiateClass(Class<?> clazz) {
-        Object bean = beans.get(clazz);
-        if (bean != null) {
-            return bean;
+    public void addInjector(Injector injector) {
+        injectors.add(injector);
+    }
+
+    public Object instantiateClass(Class<?> clazz) {
+        for (Injector injector : injectors) {
+            injector.inject(clazz);
         }
 
-        Constructor<?> constructor = BeanFactoryUtils.getCreatableConstructor(clazz);
+        return getBean(clazz);
+    }
 
-        bean = instantiateConstructor(constructor);
+    public boolean hasBean(Class<?> clazz) {
+        return beans.containsKey(clazz);
+    }
 
+    public void registerBean(Class<?> clazz, Object bean) {
         beans.put(clazz, bean);
-        return bean;
+    }
+
+    public Set<Class<?>> getPreInstantiateBeans() {
+        return Collections.unmodifiableSet(preInstantiateBeans);
     }
 
     private Object instantiateConstructor(Constructor<?> constructor) {
