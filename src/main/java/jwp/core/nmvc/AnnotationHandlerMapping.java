@@ -1,17 +1,14 @@
 package jwp.core.nmvc;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jwp.core.annotation.Controller;
 import jwp.core.annotation.RequestMapping;
 import jwp.core.annotation.RequestMethod;
-import jwp.core.di.bean.BeanFactory;
-import jwp.core.di.bean.BeanScanner;
-import jwp.core.di.inject.ConstructorInjector;
-import jwp.core.di.inject.FieldInjector;
-import jwp.core.di.inject.Injector;
-import jwp.core.di.inject.SetterInjector;
+import jwp.core.di.factory.ApplicationContext;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.ReflectionUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,20 +26,9 @@ public class AnnotationHandlerMapping implements HandlerMapping {
     }
 
     public void initialize() {
-        BeanScanner beanScanner = new BeanScanner("jwp.next");
-        BeanFactory beanFactory = new BeanFactory(beanScanner.scan());
+        ApplicationContext applicationContext = new ApplicationContext(basePackage);
 
-        Injector constructorInjector = new ConstructorInjector(beanFactory);
-        Injector fieldInjector = new FieldInjector(beanFactory);
-        Injector setterInjector = new SetterInjector(beanFactory);
-
-        beanFactory.addInjector(constructorInjector);
-        beanFactory.addInjector(fieldInjector);
-        beanFactory.addInjector(setterInjector);
-
-        beanFactory.initialize();
-
-        Map<Class<?>, Object> controllers = beanFactory.getControllers();
+        Map<Class<?>, Object> controllers = getControllers(applicationContext);
 
         Set<Method> requestMappingMethods = getRequestMappingMethods(controllers.keySet());
 
@@ -53,6 +39,8 @@ public class AnnotationHandlerMapping implements HandlerMapping {
 
             handlerExecutions.put(createHandlerKey(requestMapping), new HandlerExecution(controllers.get(method.getDeclaringClass()), method));
         });
+
+        log.info("Initialized AnnotationHandlerMapping!");
     }
 
     private HandlerKey createHandlerKey(RequestMapping requestMapping) {
@@ -63,6 +51,17 @@ public class AnnotationHandlerMapping implements HandlerMapping {
         HashSet<Method> requestMappingMethods = new HashSet<>();
         controllers.forEach(clazz -> requestMappingMethods.addAll(ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withAnnotation(RequestMapping.class))));
         return requestMappingMethods;
+    }
+
+    private Map<Class<?>, Object> getControllers(ApplicationContext ac) {
+        Map<Class<?>, Object> controllers = new HashMap<>();
+        for (Class<?> clazz : ac.getBeanClasses()) {
+            Annotation annotation = clazz.getAnnotation(Controller.class);
+            if (annotation != null) {
+                controllers.put(clazz, ac.getBean(clazz));
+            }
+        }
+        return controllers;
     }
 
     @Override
