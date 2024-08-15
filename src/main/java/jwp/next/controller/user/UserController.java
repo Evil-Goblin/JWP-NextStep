@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jwp.core.annotation.Controller;
+import jwp.core.annotation.Inject;
 import jwp.core.annotation.RequestMapping;
 import jwp.core.annotation.RequestMethod;
 import jwp.core.mvc.ModelAndView;
@@ -17,7 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class UserController extends AbstractNewController {
 
-    private final UserDao userDao = UserDao.getInstance();
+    private final UserDao userDao;
+
+    @Inject
+    public UserController(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     @RequestMapping("/users")
     public ModelAndView list(HttpServletRequest request, HttpServletResponse response) throws Exception {

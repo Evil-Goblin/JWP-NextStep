@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jwp.core.annotation.Controller;
 import jwp.core.annotation.RequestMapping;
 import jwp.core.annotation.RequestMethod;
-import jwp.core.di.factory.ApplicationContext;
+import jwp.core.di.bean.ApplicationContext;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.ReflectionUtils;
 
@@ -18,16 +18,14 @@ import java.util.Set;
 @Slf4j
 public class AnnotationHandlerMapping implements HandlerMapping {
 
-    private final Object[] basePackage;
     private final Map<HandlerKey, HandlerExecution> handlerExecutions = new HashMap<>();
+    private final ApplicationContext applicationContext;
 
-    public AnnotationHandlerMapping(Object... basePackage) {
-        this.basePackage = basePackage;
+    public AnnotationHandlerMapping(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     public void initialize() {
-        ApplicationContext applicationContext = new ApplicationContext(basePackage);
-
         Map<Class<?>, Object> controllers = getControllers(applicationContext);
 
         Set<Method> requestMappingMethods = getRequestMappingMethods(controllers.keySet());

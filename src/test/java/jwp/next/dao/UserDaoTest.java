@@ -1,5 +1,7 @@
 package jwp.next.dao;
 
+import jwp.core.jdbc.JdbcTemplate;
+import jwp.next.config.MyConfiguration;
 import jwp.next.model.User;
 import jwp.next.support.context.ContextLoaderListener;
 import org.junit.jupiter.api.AfterEach;
@@ -14,7 +16,7 @@ class UserDaoTest {
 
     static ContextLoaderListener contextLoaderListener;
 
-    UserDao userDao = UserDao.getInstance();
+    JdbcUserDao userDao = new JdbcUserDao(new JdbcTemplate(new MyConfiguration().dataSource()));
 
     @BeforeAll
     static void setUp() {

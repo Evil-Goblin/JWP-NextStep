@@ -1,4 +1,4 @@
-package jwp.core.di;
+package jwp.core.di.bean.test;
 
 import jwp.core.annotation.Component;
 

@@ -6,9 +6,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jwp.core.di.bean.ApplicationContext;
+import jwp.core.di.factory.AnnotationConfigApplicationContext;
 import jwp.core.mvc.LegacyHandlerMapping;
 import jwp.core.mvc.ModelAndView;
 import jwp.core.mvc.controller.ControllerHandlerAdapter;
+import jwp.next.config.MyConfiguration;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -28,7 +31,9 @@ public class DispatcherServlet extends HttpServlet {
         LegacyHandlerMapping legacyHandlerMapping = new LegacyHandlerMapping();
         legacyHandlerMapping.initMapping();
 
-        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping("jwp.next.controller");
+        ApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext(MyConfiguration.class);
+
+        AnnotationHandlerMapping annotationHandlerMapping = new AnnotationHandlerMapping(annotationConfigApplicationContext);
         annotationHandlerMapping.initialize();
 
         mappings.add(legacyHandlerMapping);

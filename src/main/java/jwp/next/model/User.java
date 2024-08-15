@@ -34,6 +34,10 @@ public class User {
         return this.userId.equals(user.getUserId());
     }
 
+    public boolean isSameUser(String userId) {
+        return this.userId.equals(userId);
+    }
+
     public String getUserId() {
         return userId;
     }

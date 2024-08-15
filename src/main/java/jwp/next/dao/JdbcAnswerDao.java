@@ -1,5 +1,7 @@
 package jwp.next.dao;
 
+import jwp.core.annotation.Inject;
+import jwp.core.annotation.Repository;
 import jwp.core.jdbc.JdbcTemplate;
 import jwp.core.jdbc.KeyHolder;
 import jwp.core.jdbc.PreparedStatementCreator;
@@ -9,16 +11,14 @@ import jwp.next.model.Answer;
 import java.sql.*;
 import java.util.List;
 
+@Repository
 public class JdbcAnswerDao implements AnswerDao {
-    private static final JdbcAnswerDao INSTANCE = new JdbcAnswerDao();
 
-    public static JdbcAnswerDao getInstance() {
-        return INSTANCE;
-    }
+    private final JdbcTemplate jdbcTemplate;
 
-    private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
-
-    private JdbcAnswerDao() {
+    @Inject
+    public JdbcAnswerDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public Answer insert(Answer answer) {
@@ -40,7 +40,7 @@ public class JdbcAnswerDao implements AnswerDao {
         return findById(keyHolder.getId());
     }
 
-    public Answer findById(long answerId) {
+    public Answer findById(Long answerId) {
         String sql = "SELECT answerId, writer, contents, createdDate, questionId FROM ANSWERS WHERE answerId = ?";
 
         RowMapper<Answer> rm = new RowMapper<Answer>() {
@@ -54,7 +54,7 @@ public class JdbcAnswerDao implements AnswerDao {
         return jdbcTemplate.queryForObject(sql, rm, answerId);
     }
 
-    public List<Answer> findAllByQuestionId(long questionId) {
+    public List<Answer> findAllByQuestionId(Long questionId) {
         String sql = "SELECT answerId, writer, contents, createdDate FROM ANSWERS WHERE questionId = ? "
                 + "order by answerId desc";
 
@@ -72,5 +72,10 @@ public class JdbcAnswerDao implements AnswerDao {
     public void delete(Long answerId) {
         String sql = "DELETE FROM ANSWERS WHERE answerId = ?";
         jdbcTemplate.update(sql, answerId);
+    }
+
+    @Override
+    public List<Answer> findAll() {
+        return List.of();
     }
 }

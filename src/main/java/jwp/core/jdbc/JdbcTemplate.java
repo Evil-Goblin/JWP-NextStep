@@ -2,6 +2,7 @@ package jwp.core.jdbc;
 
 import lombok.Getter;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,17 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcTemplate {
-    private static final JdbcTemplate INSTANCE = new JdbcTemplate();
 
-    public static JdbcTemplate getInstance() {
-        return INSTANCE;
-    }
+    private final DataSource dataSource;
 
-    private JdbcTemplate() {
+    public JdbcTemplate(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public void update(String sql, PreparedStatementSetter preparedStatementSetter) {
-        try (Connection con = ConnectionManager.getConnection();
+        try (Connection con = dataSource.getConnection();
              PreparedStatement pstmt = con.prepareStatement(sql)) {
             preparedStatementSetter.setParameters(pstmt);
             pstmt.executeUpdate();
@@ -34,7 +33,7 @@ public class JdbcTemplate {
     }
 
     public void update(PreparedStatementCreator preparedStatementCreator, KeyHolder holder) {
-        try (Connection conn = ConnectionManager.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             PreparedStatement ps = preparedStatementCreator.createPreparedStatement(conn);
             ps.executeUpdate();
 
@@ -60,7 +59,7 @@ public class JdbcTemplate {
 
     public <T> List<T> query(String sql, RowMapper<T> rowMapper, PreparedStatementSetter preparedStatementSetter) {
         ResultSet resultSet = null;
-        try (Connection con = ConnectionManager.getConnection();
+        try (Connection con = dataSource.getConnection();
              PreparedStatement pstmt = con.prepareStatement(sql)) {
             preparedStatementSetter.setParameters(pstmt);
             resultSet = pstmt.executeQuery();

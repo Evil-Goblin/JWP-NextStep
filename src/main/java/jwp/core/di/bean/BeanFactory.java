@@ -1,11 +1,13 @@
 package jwp.core.di.bean;
 
 import jwp.core.annotation.Controller;
+import jwp.core.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 
 @Slf4j
@@ -30,12 +32,54 @@ public class BeanFactory implements BeanDefinitionRegistry {
             return (T) bean;
         }
 
+        BeanDefinition definition = beanDefinitions.get(clazz);
+        if (definition instanceof AnnotatedBeanDefinition) {
+            bean = createAnnotatedBean(definition);
+            beans.put(clazz, bean);
+            initialize(bean, clazz);
+            return (T) bean;
+        }
+
         Class<?> concreteClass = findConcreteClass(clazz);
         BeanDefinition beanDefinition = beanDefinitions.get(concreteClass);
         bean = inject(beanDefinition);
 
         beans.put(concreteClass, bean);
+        initialize(bean, concreteClass);
         return (T) bean;
+    }
+
+    private void initialize(Object bean, Class<?> beanClass) {
+        Set<Method> initializeMethods = BeanFactoryUtils.getBeanMethods(beanClass, PostConstruct.class);
+
+        if (initializeMethods.isEmpty()) {
+            return;
+        }
+
+        for (Method method : initializeMethods) {
+            log.debug("@PostConstruct Initialize method: {}", method);
+            BeanFactoryUtils.invokeMethod(method, bean, populateArguments(method.getParameterTypes()));
+        }
+    }
+
+    private Object createAnnotatedBean(BeanDefinition beanDefinition) {
+        AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDefinition;
+        Method method = annotatedBeanDefinition.getMethod();
+        Object[] objects = populateArguments(method.getParameterTypes());
+
+        return BeanFactoryUtils.invokeMethod(method, getBean(method.getDeclaringClass()), objects);
+    }
+
+    private Object[] populateArguments(Class<?>[] parameterTypes) {
+        List<Object> args = new ArrayList<>();
+        for (Class<?> param : parameterTypes) {
+            Object bean = getBean(param);
+            if (bean == null) {
+                throw new NullPointerException(param + " Not Found");
+            }
+            args.add(getBean(param));
+        }
+        return args.toArray();
     }
 
     private Object inject(BeanDefinition beanDefinition) {

@@ -1,6 +1,6 @@
 package jwp.core.di.bean;
 
-import jwp.core.di.*;
+import jwp.core.di.bean.test.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -16,7 +16,7 @@ class BeanFactoryTest {
         ClasspathBeanDefinitionScanner beanScanner = new ClasspathBeanDefinitionScanner(beanFactory);
 
         // when
-        beanScanner.doScan("jwp.core.annotation", "jwp.core.di");
+        beanScanner.doScan("jwp.core.annotation", "jwp.core.di.bean.test");
 
         // then
         assertThat(beanFactory.getBeanClasses().size()).isEqualTo(8);
@@ -26,7 +26,7 @@ class BeanFactoryTest {
     void beanFactoryTest() {
         BeanFactory beanFactory = new BeanFactory();
         ClasspathBeanDefinitionScanner beanScanner = new ClasspathBeanDefinitionScanner(beanFactory);
-        beanScanner.doScan("jwp.core.annotation", "jwp.core.di");
+        beanScanner.doScan("jwp.core.annotation", "jwp.core.di.bean.test");
 
         beanFactory.initialize();
 

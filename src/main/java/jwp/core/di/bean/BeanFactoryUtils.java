@@ -1,14 +1,19 @@
 package jwp.core.di.bean;
 
+import jwp.core.annotation.Bean;
 import jwp.core.annotation.Inject;
+import lombok.extern.slf4j.Slf4j;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Set;
 
 import static org.reflections.ReflectionUtils.*;
 
+@Slf4j
 public class BeanFactoryUtils {
 
     public static Constructor<?> getCreatableConstructor(Class<?> clazz) {
@@ -20,7 +25,8 @@ public class BeanFactoryUtils {
         try {
             return clazz.getConstructor();
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Creatable constructor not found[class=" + clazz + "]");
+            log.error("Creatable constructor not found[class={}]", clazz);
+            return null;
         }
     }
 
@@ -45,5 +51,22 @@ public class BeanFactoryUtils {
 
     public static Set<Method> getAllInjectableMethods(Class<?> clazz) {
         return getAllMethods(clazz, withAnnotation(Inject.class));
+    }
+
+    public static Set<Method> getBeanMethods(Class<?> clazz) {
+        return getAllMethods(clazz, withAnnotation(Bean.class));
+    }
+
+    public static Set<Method> getBeanMethods(Class<?> clazz, Class<? extends Annotation> filterAnnotation) {
+        return getAllMethods(clazz, withAnnotation(filterAnnotation));
+    }
+
+    public static Object invokeMethod(Method method, Object bean, Object[] args) {
+        try {
+            return method.invoke(bean, args);
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            log.error("invoke method error", e);
+            return null;
+        }
     }
 }

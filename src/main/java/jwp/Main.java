@@ -14,7 +14,7 @@ public class Main {
         TomcatServletWebServerFactory servletWebServerFactory = new TomcatServletWebServerFactory();
 
         servletWebServerFactory.getWebServer(servletContext -> {
-            servletContext.addListener(new ContextLoaderListener());
+//            servletContext.addListener(new ContextLoaderListener());
 
             servletContext.addFilter("UUIDFilter", new UUIDFilter()).addMappingForUrlPatterns(null, false, "/*");
             servletContext.addFilter("CharacterEncodingFilter", new CharacterEncodingFilter()).addMappingForUrlPatterns(null, false, "/*");

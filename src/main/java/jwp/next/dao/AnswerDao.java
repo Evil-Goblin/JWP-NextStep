@@ -1,4 +1,9 @@
 package jwp.next.dao;
 
-public interface AnswerDao {
+import jwp.next.model.Answer;
+
+import java.util.List;
+
+public interface AnswerDao extends Dao<Answer, Long> {
+    List<Answer> findAllByQuestionId(Long questionId);
 }
